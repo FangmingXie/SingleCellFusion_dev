@@ -1,12 +1,7 @@
-#!/usr/bin/env python3
-
 """Generate tSNE coordinates
 """
-
 from __init__ import *
 from snmcseq_utils import create_logger
-
-
 
 def run_tsne(df, perp=30, n_pc=50, n_tsne=2, 
              random_state=1, output_file=None, sample_column_suffix=None, **kwargs):
@@ -168,70 +163,3 @@ def run_tsne_v2(df, perp=30, n_pc=50, n_tsne=2,
     
     return df_tsne
     
-# def run_umap(df, n_pc=50, n_neighbors=50, min_dist=0.3, n_dim=2, 
-#              output_file=None, sample_column_suffix=None, **kwargs): 
-#     from sklearn.decomposition import PCA
-#     import umap
-    
-#     ti = time.time()
-#     pca = PCA(n_components=n_pc)
-#     pcs = pca.fit_transform(df.T)
-#     ts = umap.UMAP(n_neighbors=n_neighbors, min_dist=min_dist, 
-#               metric='euclidean', **kwargs).fit_transform(pcs)
-
-#     if n_dim == 2: 
-#         df_res = pd.DataFrame(ts, columns=['tsne_x','tsne_y'])
-#     elif n_dim == 3:
-#         df_res = pd.DataFrame(ts, columns=['tsne_x','tsne_y', 'tsne_z'])
-
-#     if sample_column_suffix:
-#         df_res['sample'] = [sample[:-len(sample_column_suffix)] for sample in df.columns.tolist()]
-#     else:
-#         df_res['sample'] = df.columns.tolist()
-#     df_res = df_res.set_index('sample')
-    
-#     if output_file:
-#         df_res.to_csv(output_file, sep="\t", na_rep='NA', header=True, index=True)
-#         logging.info("Saved UMAP coordinates to file. {}".format(output_file))
-
-#     tf = time.time()
-#     logging.info("Done with UMAP. running time: {} seconds.".format(tf - ti))
-    
-#     return df_res
-
-
-
-def run_tsne_CEMBA(ens, perps=PERPLEXITIES, n_pc=N_PC, n_dim=N_DIM):
-	"""
-	run default tsnes for one ensemble
-	"""
-	ens_path = os.path.join(PATH_ENSEMBLES, ens)
-	nmcc_files = sorted(glob.glob(os.path.join(ens_path, 'binc/binc_*_nmcc_{}.tsv'.format(ens)))) 
-
-	if not os.path.isdir(os.path.join(ens_path, 'tsne')):
-		os.makedirs(os.path.join(ens_path, 'tsne'))
-	# if not os.path.isdir(os.path.join(ens_path, 'plots')):
-	#	os.makedirs(os.path.join(ens_path, 'plots'))
-
-	for nmcc_file in nmcc_files:
-		nmcc_basename = os.path.basename(nmcc_file) 
-		df = pd.read_table(nmcc_file, dtype={'chr': object})
-		for perp in perps:
-			output_coords = os.path.join(ens_path, 'tsne/tsne_ndim{}_perp{}_npc{}_{}'.format(n_dim, perp, n_pc, nmcc_basename))
-			# output_plot = os.path.join(ens_path, 'plots/tsne_ndim{}_perp{}_npc{}_{}.pdf'.format(n_dim, perp, n_pc, nmcc_basename[:-len('.tsv')]))
-			df_tsne = run_tsne(df, perp=perp, n_pc=n_pc, n_tsne=n_dim, output_file=output_coords, sample_column_suffix='_mcc')
-			# if n_dim == 2:
-			# 	plot_tsne(df_tsne, output_file=output_plot)
-	return
-
-if __name__ == '__main__':
-
-	ti = time()
-	log = create_logger()
-
-	enss = ['Ens1', 'Ens2', 'Ens3', 'Ens4']
-	for ens in enss:	
-		run_tsne_CEMBA(ens)
-
-	tf = time()
-	log.info("total tSNE running time: {} second s".format(tf-ti))

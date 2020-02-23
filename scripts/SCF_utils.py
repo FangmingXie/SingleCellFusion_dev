@@ -1,4 +1,7 @@
+"""Utilities for SingleCellFusion
+"""
 from __init__ import *
+
 import functools
 import collections
 import itertools
@@ -12,12 +15,6 @@ import logging
 import snmcseq_utils
 import CEMBA_run_tsne
 import CEMBA_clst_utils
-
-
-def standardize_gene_name(gene_name):
-    new_name = gene_name[0].upper() + gene_name[1:].lower()
-    return new_name
-standardize_gene_name = np.vectorize(standardize_gene_name)
 
 def sparse_adj_to_mat(adjs, row_size, col_size, dists=''):
     """Turn a knn adjacency matrix to a sparse matrix

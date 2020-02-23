@@ -1,10 +1,6 @@
-#!/usr/bin/env python3
+"""Clustering utils
 """
-louvain clustering from kNN graph
-2 model parameters: # of PCs and # of nearest neighbors
 
-updated from CEMBA_clustering_louvain_jaccard.py for large number of cells
-"""
 from __init__ import *
 from sklearn.decomposition import PCA
 from sklearn.neighbors import NearestNeighbors
@@ -432,78 +428,3 @@ def clustering_routine_multiple_resolutions(X, cell_list, k,
     res = pd.concat(res, axis=1)
     
     return res
-
-
-# def louvain_lite_resolution(G, cell_list, resolution=1, verbose=True):
-#     """
-#     weighted=False is 10x faster than True
-#     """
-#     import community
-
-#     ti = time.time()
-        
-#     partition1 = community.best_partition(G, resolution=resolution, randomize=True)
-
-#     cell_idx = []
-#     labels = []
-#     for key, val in partition1.items():
-#         cell_idx.append(key)
-#         labels.append(val)
-
-#     df_res = pd.DataFrame(index=np.array(cell_list)[cell_idx])
-#     df_res['cluster'] = labels 
-#     df_res = df_res.rename_axis('sample', inplace=False)
-    
-#     if verbose:
-#         print("Time spent on louvain clustering: {}".format(time.time()-ti))
-#     return df_res
-
-
-# def clustering_routine_old(X, cell_list, k, metric='euclidean', option='plain'):
-#     """
-#     X is a (n_obs, n_feature) matrix, n_feature <=50 is recommended
-#     option: {'plain', 'jaccard', ...}
-#     """
-#     if option == 'plain':
-#         g_knn = gen_knn(X, k, form='adj', metric=metric, verbose=True)
-#         G = adjacency_to_igraph(g_knn, weighted=False)
-#         df_res = louvain_lite(G, cell_list, weighted=False)
-        
-#     elif option == 'jaccard':
-#         g_knn = gen_knn(X, k, form='adj', metric=metric, verbose=True)
-#         gw_knn = compute_jaccard_weights_from_knn(g_knn)
-#         G = adjacency_to_igraph(gw_knn, weighted=True)
-#         df_res = louvain_lite(G, cell_list, weighted=True)
-#     else:
-#         raise ValueError('Choose from "plain" and "jaccard"')
-    
-#     return df_res
-
-# def clustering_routine_resolution(X, cell_list, k, resolution=1, 
-#     metric='euclidean', option='plain', n_trees=10, search_k=-1):
-#     """Non-directed graph only
-#     X is a (n_obs, n_feature) matrix, n_feature <=50 is recommended
-#     option: {'plain', 'jaccard', ...}
-#     """
-#     assert option in ['plain', 'jaccard']
-
-#     if option == 'plain':
-#         g_knn = gen_knn_annoy(X, k, form='adj', metric=metric, 
-#                               n_trees=n_trees, search_k=search_k, verbose=True)
-#         G = adjacency_to_nxgraph(g_knn, weighted=False)
-#         df_res = louvain_lite_resolution(G, cell_list, resolution=resolution, verbose=True)
-        
-#     elif option == 'jaccard':
-#         g_knn = gen_knn_annoy(X, k, form='adj', metric=metric, 
-#                               n_trees=n_trees, search_k=search_k, verbose=True)
-#         gw_knn = compute_jaccard_weights_from_knn(g_knn)
-#         G = adjacency_to_nxgraph(gw_knn, weighted=True)
-#         df_res = louvain_lite_resolution(G, cell_list, resolution=resolution, verbose=True)
-        
-#     else:
-#         raise ValueError('Choose from "plain" and "jaccard"')
-    
-#     return df_res
-
-
-
