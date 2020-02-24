@@ -1,10 +1,8 @@
-"""Clustering utils
+"""Utility functions for clusterings and embeddings
 """
 
 from __init__ import *
 from sklearn.decomposition import PCA
-from sklearn.neighbors import NearestNeighbors
-import louvain
 import igraph as ig
 from scipy import sparse
 from annoy import AnnoyIndex
@@ -178,28 +176,6 @@ def gen_knn_annoy_train_test(X_train, X_test, k,
                                 include_distances=include_distances,
                                 verbose=verbose, 
                                 )
-
-def gen_knn(pcX, k, form='adj', metric='euclidean', verbose=True): 
-    """Generate kNN matrix from a pcX (n_obs, n_feature) matrix
-    """
-    ti = time.time()
-
-    n_obs, n_f = X.shape
-    k = min(k, n_obs)
-    
-    knn = NearestNeighbors(n_neighbors=k, metric=metric).fit(pcX)
-    
-    if form == 'adj':
-        g_knn = knn.kneighbors_graph(pcX, mode='connectivity')
-        if verbose:
-            print("Time spent on generate kNN graph: {}".format(time.time()-ti))
-        return g_knn
-            
-    elif form == 'list':
-        dists, inds = knn.kneighbors(pcX)
-        if verbose:
-            print("Time spent on generate kNN graph: {}".format(time.time()-ti))
-        return (dists, inds) 
     
 def compute_jaccard_weights_from_knn(X):
     """compute jaccard index on a knn graph
@@ -251,56 +227,6 @@ def adjacency_to_igraph(adj_mtx, weighted=False):
     if weighted:
         G.es['weight'] = adj_mtx.data
     return G
-
-def adjacency_to_nxgraph(adj_mtx, weighted=False):
-    """
-    Converts an adjacency matrix to an networkx object
-    Args:
-        adj_mtx (sparse matrix): Adjacency matrix
-    Returns:
-        G (networkx object): networkx object of adjacency matrix
-    """
-    import networkx as nx
-
-    nrow, ncol = adj_mtx.shape
-    if nrow != ncol:
-        raise ValueError('Adjacency matrix should be a square matrix')
-    sources, targets = adj_mtx.nonzero()
-    G = nx.Graph()
-    if not weighted:
-        edgelist = list(zip(sources.tolist(), targets.tolist()))
-        G.add_edges_from(edgelist) # non-direct graph only
-    else:
-        edgelist = list(zip(sources.tolist(), targets.tolist(), weights.tolist()))
-        G.add_weighted_edges_from(edgelist) # non-direct graph only
-    return G
-
-def louvain_lite(G, cell_list, weighted=False, verbose=True):
-    """weighted=False is 10x faster than True
-    """
-    ti = time.time()
-        
-    if weighted:
-        partition1 = louvain.find_partition(G, louvain.ModularityVertexPartition, 
-                                            weights=G.es["weight"]
-                                           )
-    else:
-        partition1 = louvain.find_partition(G, louvain.ModularityVertexPartition) 
-        
-    labels = [0]*(len(cell_list)) 
-    for i, cluster in enumerate(partition1):
-        for element in cluster:
-            labels[element] = i+1
-
-    df_res = pd.DataFrame(index=cell_list)
-    df_res['cluster'] = labels 
-    df_res = df_res.rename_axis('sample', inplace=False)
-    
-    if verbose:
-        print("Time spent on louvain clustering: {}".format(time.time()-ti))
-        
-    return df_res
-
 
 def leiden_lite(g, cell_list, resolution=1, weighted=False, verbose=True, num_starts=None, seed=1):
     """ Code from Ethan Armand and Wayne Doyle, ./mukamel_lab/mop
@@ -375,7 +301,6 @@ def clustering_routine(X, cell_list, k,
         g_knn = gen_knn_annoy(X, k, form='adj', metric=metric, 
                               n_trees=n_trees, search_k=search_k, verbose=verbose)
         G = adjacency_to_igraph(g_knn, weighted=False)
-        # df_res = louvain_lite(G, cell_list, weighted=False)
         df_res = leiden_lite(G, cell_list, resolution=resolution, seed=seed, 
                             weighted=False, verbose=verbose, num_starts=num_starts)
         
@@ -384,7 +309,6 @@ def clustering_routine(X, cell_list, k,
                               n_trees=n_trees, search_k=search_k, verbose=verbose)
         gw_knn = compute_jaccard_weights_from_knn(g_knn)
         G = adjacency_to_igraph(gw_knn, weighted=True)
-        # df_res = louvain_lite(G, cell_list, weighted=True)
         df_res = leiden_lite(G, cell_list, resolution=resolution, seed=seed, 
                             weighted=True, verbose=verbose, num_starts=num_starts)
     else:
@@ -428,3 +352,36 @@ def clustering_routine_multiple_resolutions(X, cell_list, k,
     res = pd.concat(res, axis=1)
     
     return res
+
+def run_umap_lite(X, cell_list, n_neighbors=15, min_dist=0.1, n_dim=2, 
+             random_state=1, output_file=None, **kwargs):
+    """run umap on X (n_obs, n_features) 
+    """
+    from sklearn.decomposition import PCA
+    from umap import UMAP
+
+    ti = time.time()
+
+    logging.info("Running UMAP: {} n_neighbors, {} min_dist , {} dim.\nInput shape: {}"
+                        .format(n_neighbors, min_dist, n_dim, X.shape))
+    
+    umap = UMAP(n_components=n_dim, random_state=random_state, 
+                n_neighbors=n_neighbors, min_dist=min_dist, **kwargs)
+    ts = umap.fit_transform(X)
+ 
+    if n_dim == 2: 
+        df_umap = pd.DataFrame(ts, columns=['tsne_x','tsne_y'])
+    elif n_dim == 3:
+        df_umap = pd.DataFrame(ts, columns=['tsne_x','tsne_y', 'tsne_z'])
+
+    df_umap['sample'] = cell_list 
+    df_umap = df_umap.set_index('sample')
+    
+    if output_file:
+        df_umap.to_csv(output_file, sep="\t", na_rep='NA', header=True, index=True)
+        logging.info("Saved coordinates to file. {}".format(output_file))
+
+    tf = time.time()
+    logging.info("Done. running time: {} seconds.".format(tf - ti))
+    
+    return df_umap

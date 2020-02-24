@@ -13,7 +13,6 @@ import sys
 import logging
 
 import snmcseq_utils
-import CEMBA_run_tsne
 import CEMBA_clst_utils
 
 def sparse_adj_to_mat(adjs, row_size, col_size, dists=''):
@@ -441,7 +440,7 @@ def clustering_umap_routine(pcX_all, cells_all, mods_selected, metas,
 
     else:
         # umap
-        df_tsne = CEMBA_run_tsne.run_umap_lite(
+        df_tsne = CEMBA_clst_utils.run_umap_lite(
                     pcX_all, 
                     cells_all, n_neighbors=umap_neighbors, min_dist=min_dist, n_dim=2, 
                     random_state=1)

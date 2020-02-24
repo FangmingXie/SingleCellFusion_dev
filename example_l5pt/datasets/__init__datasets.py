@@ -12,16 +12,16 @@ mods = (
 )
 
 Mod_info = collections.namedtuple('Mod_info', [
-    'mod', 
-    'name',
-    'mod_category',
-    'norm_option',
-    'mod_direction', # +1 or -1
-    'cell_col',
-    'cluster_col', 
-    'annot_col', 
-    'global_mean', # in general or mch
-    'global_mean_mcg', # only for mcg
+    'mod', # name of the data modality (used internally as prefix in every related file name) 
+    'name', # name of the data modality (used to make plots)
+    'mod_category', # choose from rna/atac/mc
+    'norm_option', # choose from mc/cpm/tpm
+    'mod_direction', # +1 or -1; +1 for RNA/ATAC/MERFISH; -1 for DNA methylation
+    'cell_col', # cell id
+    'cluster_col', # cluster label 
+    'annot_col', # cluster annotation 
+    'global_mean', # in general or mch; leave it blank if it's not DNA methylation data
+    'global_mean_mcg', # for mcg only; leave it blank if it's not DNA methylation data
     'color',
     'species',
 ])
@@ -87,7 +87,6 @@ settings_10xc = Mod_info(
     '#F68B1F',
     'mouse',
 )
-
 
 settings = collections.OrderedDict({
     mods[0]: settings_mc,

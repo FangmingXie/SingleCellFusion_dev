@@ -14,8 +14,6 @@ import pickle
 import argparse
 
 import snmcseq_utils
-import CEMBA_run_tsne
-import CEMBA_clst_utils
 import SCF_utils
 
 log = snmcseq_utils.create_logger()
