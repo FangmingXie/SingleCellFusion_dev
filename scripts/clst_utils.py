@@ -7,7 +7,7 @@ import igraph as ig
 from scipy import sparse
 from annoy import AnnoyIndex
 
-from snmcseq_utils import create_logger
+from basic_utils import create_logger
 
 # major change in annoy functions 5/7/2019 
 def build_knn_map(X, metric='euclidean', n_trees=10, verbose=True):

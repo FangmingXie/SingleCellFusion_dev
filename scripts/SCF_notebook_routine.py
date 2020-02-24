@@ -13,10 +13,10 @@ import scipy.cluster.hierarchy as sch
 import pickle
 import argparse
 
-import snmcseq_utils
+import basic_utils
 import SCF_utils
 
-log = snmcseq_utils.create_logger()
+log = basic_utils.create_logger()
 
 def create_parser():
     """
@@ -62,7 +62,7 @@ for mod in mods_selected:
     f_mat = hvftrs_f.format(mod, 'npz')
     f_gene = hvftrs_gene.format(mod)
     f_cell = hvftrs_cell.format(mod)
-    _gxc_tmp = snmcseq_utils.load_gc_matrix(f_gene, f_cell, f_mat)
+    _gxc_tmp = basic_utils.load_gc_matrix(f_gene, f_cell, f_mat)
     _gene = _gxc_tmp.gene
     _cell = _gxc_tmp.cell
     _mat = _gxc_tmp.data
@@ -150,7 +150,7 @@ joint_annot = df_info[df_info['modality'].isin(features_selected)].groupby([join
 
 # get uniq colors for joint clusters  
 clsts = np.sort(df_info[joint_cluster].unique())
-colors = snmcseq_utils.gen_colors(len(clsts))
+colors = basic_utils.gen_colors(len(clsts))
 joint_clst_colors = {clst: color for clst, color in zip(clsts, colors)}
 
 # histograms
@@ -175,7 +175,7 @@ def plot_1():
     kw_colors = {settings[mod].name: settings[mod].color for mod in mods_ordered}
     tx, ty, tc = 'tsne_x_joint', 'tsne_y_joint', 'modality_name'
     legend_kws = {'bbox_to_anchor': (1, 1), 'loc': 'upper left'}
-    snmcseq_utils.plot_tsne_labels_ax(df_info, ax, tx, ty, tc, 
+    basic_utils.plot_tsne_labels_ax(df_info, ax, tx, ty, tc, 
                                       legend_kws=legend_kws,
                                       kw_colors=kw_colors,
                                       sample_n=sample_n,
@@ -190,7 +190,7 @@ def plot_1():
     for resolution, layout in zip(resolutions, layouts):
         ax = fig.add_subplot(gs[layout[0], layout[1]])
         tx, ty, tc = 'tsne_x_joint', 'tsne_y_joint', 'cluster_joint_r{}'.format(resolution)
-        snmcseq_utils.plot_tsne_labels_ax(df_info, ax, tx, ty, tc, 
+        basic_utils.plot_tsne_labels_ax(df_info, ax, tx, ty, tc, 
                                           legend_mode=-1,
                                           sample_n=sample_n,
                                           rasterized=True,
@@ -211,7 +211,7 @@ def plot_1_single(kw_colors='', show_labels=False, output=''):
     fig, ax = plt.subplots(1, 1, figsize=(8*1,8*1))
     tx, ty, tc = 'tsne_x_joint', 'tsne_y_joint', joint_cluster
     legend_kws = {'bbox_to_anchor': (1, 1), 'loc': 'upper left'}
-    snmcseq_utils.plot_tsne_labels_ax(df_info, ax, tx, ty, tc, 
+    basic_utils.plot_tsne_labels_ax(df_info, ax, tx, ty, tc, 
                                          #  legend_kws=legend_kws,
                                       sample_n=sample_n,
                                       legend_size=30,
@@ -243,7 +243,7 @@ def plot_2_single(output=''):
     kw_colors = {settings[mod].name: settings[mod].color for mod in mods_selected}
     tx, ty, tc = 'tsne_x_joint', 'tsne_y_joint', 'modality_name'
     legend_kws = {'bbox_to_anchor': (1, 1), 'loc': 'upper left'}
-    snmcseq_utils.plot_tsne_labels_ax(df_info, ax, tx, ty, tc, 
+    basic_utils.plot_tsne_labels_ax(df_info, ax, tx, ty, tc, 
                                       legend_kws=legend_kws,
                                       sample_n=sample_n,
                                       legend_size=30,
@@ -269,7 +269,7 @@ def plot_3(output='',
     tx, ty, tc = 'tsne_x_joint', 'tsne_y_joint', 'cluster'
 
     for ax, mod in zip(axs, mods_selected):
-        snmcseq_utils.plot_tsne_labels_ax(df_info[df_info['modality']==mod], ax, tx, ty, tc, 
+        basic_utils.plot_tsne_labels_ax(df_info[df_info['modality']==mod], ax, tx, ty, tc, 
                                           sample_n=sample_n,
                                           legend_mode=-1,
                                           rasterized=True,
@@ -381,7 +381,7 @@ with sns.plotting_context('talk'):
         if i == 0:
             # order both row and col
             _X = conf_mat_njoint
-            _rX, ri, rc = snmcseq_utils.diag_matrix(_X.values, _X.index.values, _X.columns.values, threshold=0.3)
+            _rX, ri, rc = basic_utils.diag_matrix(_X.values, _X.index.values, _X.columns.values, threshold=0.3)
             _rX = pd.DataFrame(_rX, index=ri, columns=rc)
             g = sns.heatmap(_rX.T, 
                         cbar=True,
@@ -398,7 +398,7 @@ with sns.plotting_context('talk'):
         else:
             # order just row (orig)
             _X = conf_mat_njoint.loc[:, order_joint].fillna(0)
-            _rX, ri, rc = snmcseq_utils.diag_matrix_rows(_X.values, _X.index.values, _X.columns.values)
+            _rX, ri, rc = basic_utils.diag_matrix_rows(_X.values, _X.index.values, _X.columns.values)
             _rX = pd.DataFrame(_rX, index=ri, columns=rc)
             g = sns.heatmap(_rX.T, 
                         cbar=False,

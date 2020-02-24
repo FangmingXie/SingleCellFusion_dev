@@ -12,8 +12,8 @@ import fbpca
 import sys
 import logging
 
-import snmcseq_utils
-import CEMBA_clst_utils
+import basic_utils
+import clst_utils
 
 def sparse_adj_to_mat(adjs, row_size, col_size, dists=''):
     """Turn a knn adjacency matrix to a sparse matrix
@@ -45,7 +45,7 @@ def smooth_in_modality(counts_matrix, norm_counts_matrix, k, ka, npc=100, sigma=
     """
     from sklearn.neighbors import NearestNeighbors
     import fbpca
-    import CEMBA_clst_utils
+    import clst_utils
     
     assert counts_matrix.shape[1] == norm_counts_matrix.shape[1] 
 
@@ -59,7 +59,7 @@ def smooth_in_modality(counts_matrix, norm_counts_matrix, k, ka, npc=100, sigma=
         pcs = pcs[:, drop_npc:]
 
     # get k nearest neighbor distances fast version 
-    inds, dists = CEMBA_clst_utils.gen_knn_annoy(pcs, k, form='list', 
+    inds, dists = clst_utils.gen_knn_annoy(pcs, k, form='list', 
                                                 metric='euclidean', n_trees=10, search_k=-1, verbose=True, 
                                                 include_distances=True)
     
@@ -128,7 +128,7 @@ def get_constrained_knn(mat_norm_j, mat_norm_i, knn, k_saturate, knn_speed_facto
         np.random.shuffle(rejected_cells) # random order
         # do something to rejected cells and unsaturated cells
         # knn_ji # for each cell in j, its knn in i
-        knn_ji = CEMBA_clst_utils.gen_knn_annoy_train_test(mat_norm_i.values[unsaturated_cells], # look for nearest neighbors in i 
+        knn_ji = clst_utils.gen_knn_annoy_train_test(mat_norm_i.values[unsaturated_cells], # look for nearest neighbors in i 
                                                            mat_norm_j.values[rejected_cells], # for each row in j
                                                            min(knn*knn_speed_factor, len(unsaturated_cells)), #  
                                                            form='list', # adj matrix 
@@ -193,8 +193,8 @@ def impute_1pair_cca(mod_i, mod_j,
     
     ## CCA euclidean distance 
     # normalize the feature matrix
-    X = mat_ii[genes_common].T.apply(snmcseq_utils.zscore, axis=0)*direct_i # gene by cell, zscore across genes
-    Y = mat_jj[genes_common].T.apply(snmcseq_utils.zscore, axis=0)*direct_j
+    X = mat_ii[genes_common].T.apply(basic_utils.zscore, axis=0)*direct_i # gene by cell, zscore across genes
+    Y = mat_jj[genes_common].T.apply(basic_utils.zscore, axis=0)*direct_j
     U, s, Vt = fbpca.pca(X.T.values.dot(Y.values), k=n_cca)
     del X, Y
 
@@ -264,11 +264,11 @@ def impute_1pair(mod_i, mod_j,
     ## spearman correlation as distance  (rank -> zscore -> (flip sign?) -> "dot" distance) 
     # normalize the feature matrix
     mat_norm_i = (mat_ii[genes_common].rank(pct=True, axis=1)
-                                      .apply(snmcseq_utils.zscore, axis=1)
+                                      .apply(basic_utils.zscore, axis=1)
                                       *direct_i
                  )
     mat_norm_j = (mat_jj[genes_common].rank(pct=True, axis=1)
-                                      .apply(snmcseq_utils.zscore, axis=1)
+                                      .apply(basic_utils.zscore, axis=1)
                                       *direct_j
                  )
     maxk_i = int((len(cells_j)/len(cells_i))*knn*relaxation)+1 # max number of NN a cell in i can get 
@@ -418,7 +418,7 @@ def clustering_umap_routine(pcX_all, cells_all, mods_selected, metas,
     df_clsts = []
     for resolution in resolutions:
         logging.info('resolution r: {}'.format(resolution))
-        df_clst = CEMBA_clst_utils.clustering_routine(
+        df_clst = clst_utils.clustering_routine(
                                         pcX_all, 
                                         cells_all, k, 
                                         resolution=resolution,
@@ -440,7 +440,7 @@ def clustering_umap_routine(pcX_all, cells_all, mods_selected, metas,
 
     else:
         # umap
-        df_tsne = CEMBA_clst_utils.run_umap_lite(
+        df_tsne = clst_utils.run_umap_lite(
                     pcX_all, 
                     cells_all, n_neighbors=umap_neighbors, min_dist=min_dist, n_dim=2, 
                     random_state=1)
