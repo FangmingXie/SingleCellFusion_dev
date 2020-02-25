@@ -7,6 +7,7 @@ For more information and to cite this work:
 - [Github repo--mukamel-lab/SingleCellFusion](https://github.com/mukamel-lab/SingleCellFusion)
 
 Code contributors: [Fangming Xie](mailto:f7xie@ucsd.edu), [Ethan Armand](mailto:ejarmand@ucsd.edu), Wayne I. Doyle
+
 Contact: [Eran Mukamel](mailto:emukamel@ucsd.edu)
 
 ## Installation
