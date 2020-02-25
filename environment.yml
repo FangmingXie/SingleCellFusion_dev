@@ -1,4 +1,4 @@
-name: scf_lite 
+name: scf_dev 
 channels:
   - bioconda
   - conda-forge
