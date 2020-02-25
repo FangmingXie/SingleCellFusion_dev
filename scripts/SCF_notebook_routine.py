@@ -202,7 +202,7 @@ def plot_1():
 
     fig.tight_layout()
     fig.savefig(output_figures.format(1, 'pdf'), bbox_inches='tight', dpi=300)
-    plt.show()
+    # plt.show()
 
 
 def plot_1_single(kw_colors='', show_labels=False, output=''):
@@ -234,7 +234,7 @@ def plot_1_single(kw_colors='', show_labels=False, output=''):
                    )
 
     fig.savefig(output, bbox_inches='tight', dpi=300)
-    plt.show()
+    # plt.show()
         
 def plot_2_single(output=''):
     """Plot umap - modality
@@ -255,7 +255,7 @@ def plot_2_single(output=''):
     ax.axis('off')
 
     fig.savefig(output, bbox_inches='tight', dpi=300)
-    plt.show()
+    # plt.show()
 
 def plot_3(output='', 
            show_labels=False):
@@ -295,7 +295,7 @@ def plot_3(output='',
 
     fig.subplots_adjust(wspace=0.05, hspace=0.05)
     fig.savefig(output, bbox_inches='tight', dpi=300)
-    plt.show()
+    # plt.show()
 
 plot_1()
 
@@ -345,7 +345,7 @@ with sns.axes_style('white', {"patch.edgecolor": "black", 'patch.force_edgecolor
     ax.set_ylabel('')
     ax.set_yticklabels([])
     fig.savefig(output_figures.format(4, 'pdf'), bbox_inches='tight')
-    plt.show()
+    # plt.show()
 
 # confusion matrix
 nx = len(mods_ordered)
@@ -436,6 +436,6 @@ with sns.plotting_context('talk'):
             
     plt.subplots_adjust(hspace=0.05, wspace=0.05)
     fig.savefig(output_figures.format(5, 'pdf'), bbox_inches='tight')
-    plt.show()
+    # plt.show()
 
 logging.info('Done making figures')

@@ -2,7 +2,7 @@
 """
 
 from __init__ import *
-from sklearn.decomposition import PCA
+# from sklearn.decomposition import PCA
 import igraph as ig
 from scipy import sparse
 from annoy import AnnoyIndex
@@ -357,7 +357,7 @@ def run_umap_lite(X, cell_list, n_neighbors=15, min_dist=0.1, n_dim=2,
              random_state=1, output_file=None, **kwargs):
     """run umap on X (n_obs, n_features) 
     """
-    from sklearn.decomposition import PCA
+    # from sklearn.decomposition import PCA
     from umap import UMAP
 
     ti = time.time()

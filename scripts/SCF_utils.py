@@ -43,7 +43,7 @@ def smooth_in_modality(counts_matrix, norm_counts_matrix, k, ka, npc=100, sigma=
         - smoothed cells_matrix (pandas dataframe)
         - markov affinity matrix
     """
-    from sklearn.neighbors import NearestNeighbors
+    # from sklearn.neighbors import NearestNeighbors
     import fbpca
     import clst_utils
     
