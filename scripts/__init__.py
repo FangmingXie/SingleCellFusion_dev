@@ -7,7 +7,7 @@ import os
 import numpy as np
 import pandas as pd
 import collections
-from natsort import natsorted
+# from natsort import natsorted
 
 # matplotlib
 import matplotlib as mpl
