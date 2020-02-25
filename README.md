@@ -15,10 +15,11 @@ cd SingleCellFusion_dev
 
 Step 2: Set up a conda environment and install dependent packages. (Skip this step if not needed.)
 ```bash
-conda create -f environment.yml
+conda env create -f environment.yml # create an env named scf_lite
 source activate scf_lite
 ```
 
 ## Usage
 ```./scripts``` contains the main code
+
 ```./example_l5pt``` contains an example of integrating the layer 5 projection-track (L5 PT) neurons from 4 different datasets from the mouse primary motor cortex [manuscript in preparation](). The example includes the organized datasets, code, and results, which could be used as a template for other similar tasks.
