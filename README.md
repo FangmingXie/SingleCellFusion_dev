@@ -22,4 +22,4 @@ source activate scf_dev
 ## Usage
 ```./scripts``` contains the main code.
 
-```./example_l5pt``` contains an example of integrating the layer 5 projection-track (L5 PT) neurons from 4 different datasets from the mouse primary motor cortex [manuscript in preparation](). The example includes the organized datasets, code, and results, which could be used as a template for other similar tasks.
+```./example_l5pt``` contains an example of integrating the layer 5 projection-track (L5 PT) neurons from 4 different datasets from the mouse primary motor cortex ([manuscript in preparation]()). The example includes the organized datasets, code, and results, which could be used as a template for other similar tasks.
