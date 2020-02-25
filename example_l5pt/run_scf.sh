@@ -1,3 +1,3 @@
 #!/bin/bash
 
-../scripts/SCF_notebook_routine.py -c ./config_scf.py
+../scripts/SCF_main.py -c ./config_scf.py

@@ -1,5 +1,0 @@
-- clean up data (remove non-PT labels)
-- environment (copy minimum from conda dobro)
-- readme
-
-- merge to SingleCellFusion package (first commit Wayne's changes)
