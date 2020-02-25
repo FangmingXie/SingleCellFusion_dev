@@ -6,7 +6,8 @@ For more information and to cite this work:
 - [Luo, C. et al. Single nucleus multi-omics links human cortical cell regulatory genome diversity to disease risk variants. bioRxiv 2019.12.11.873398 (2019) doi:10.1101/2019.12.11.873398](https://www.biorxiv.org/content/10.1101/2019.12.11.873398v1)
 - [Github repo--mukamel-lab/SingleCellFusion](https://github.com/mukamel-lab/SingleCellFusion)
 
-Code contributors: [Fangming Xie](f7xie@ucsd.edu), Ethan Armand, Wayne I. Doyle
+Code contributors: [Fangming Xie](mailto:f7xie@ucsd.edu), [Ethan Armand](mailto:ejarmand@ucsd.edu), Wayne I. Doyle
+Contact: [Eran Mukamel](mailto:emukamel@ucsd.edu)
 
 ## Installation
 Step 1: Clone this repo.
